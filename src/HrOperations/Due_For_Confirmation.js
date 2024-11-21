@@ -51,9 +51,13 @@ function Due_For_Confirmation({
       if (isValid) {
         const result = await PostConfirmationPayload(data);
         if (result?.success) {
-          message.success('PDF is created, Wait PDF is under downloading...');
-          setFormSubmitted(true);
-          setDueCOnfirmationData(result?.data); // Set the DueCOnfirmation data immediately
+          if(result?.data?.length > 0){
+            message.success('PDF is created, Wait PDF is under downloading...');
+            setFormSubmitted(true);
+            setDueCOnfirmationData(result?.data); 
+          }else{
+            message.error("Data isn't available...");
+          }
         } else {
           message.error(result?.message || result?.messsage);
         }
@@ -122,12 +126,6 @@ function Due_For_Confirmation({
 
   const handleDownload = async () => {
     try {
-      // Ensure isDueCOnfirmationData is not empty before generating the PDF
-      if (isDueCOnfirmationData.length === 0) {
-        message.error('No data available for PDF.');
-        return;
-      }
-
       const pdfBlob = await pdf(PdfData).toBlob();
       saveAs(pdfBlob, 'generated.pdf');
     } catch (error) {

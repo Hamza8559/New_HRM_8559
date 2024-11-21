@@ -50,12 +50,13 @@ function RetirementSeparationReport({
       if (isValid) {
         const result = await PostRetirementSeparationReportPayload(data);
         if (result?.success) {
-          message.success('PDF is created, Wait PDF is under downloading...');
-          setFormSubmitted(true);
-          setRetirementSeparationReportData(result?.data);
-
-          // Now, you can generate the PDF
-          await generatePdf();
+          if(result?.data?.length > 0){
+            message.success('PDF is created, Wait PDF is under downloading...');
+            setFormSubmitted(true);
+            setRetirementSeparationReportData(result?.data);
+          }else{
+            message.error("Data isn't available...");
+          }
         } else {
           message.error(result?.message || result?.messsage);
         }
@@ -66,20 +67,6 @@ function RetirementSeparationReport({
     setLoading(false);
   };
 
-  const generatePdf = async () => {
-    try {
-      // Ensure isRetirementSeparationReportData is not empty before generating the PDF
-      if (isRetirementSeparationReportData.length === 0) {
-        message.error('No data available for PDF.');
-        return;
-      }
-
-      const pdfBlob = await pdf(PdfData).toBlob();
-      saveAs(pdfBlob, 'generated.pdf');
-    } catch (error) {
-      console.error('Error downloading PDF:', error);
-    }
-  };
   useEffect(() => {
     if (isFormSubmitted) {
       handleDownload();
@@ -145,18 +132,12 @@ function RetirementSeparationReport({
 
   const handleDownload = async () => {
     try {
-      if (isRetirementSeparationReportData.length === 0) {
-        message.error('No data available for PDF.');
-        return;
-      }
-
       const pdfBlob = await pdf(PdfData).toBlob();
       saveAs(pdfBlob, 'generated.pdf');
     } catch (error) {
       console.error('Error downloading PDF:', error);
     }
   };
-
 
   return (
     <>

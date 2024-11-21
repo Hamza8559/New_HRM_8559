@@ -55,10 +55,11 @@ function New_Appointment_Report({
           if(result?.data?.length > 0){
             message.success('PDF is created, Wait PDF is under downloading...');
             setFormSubmitted(true);
-            setAppointmentData(result?.data); // Set the appointment data immediately
+            setAppointmentData(result?.data);
+            console.log("isAppointmentData",result)
+             // Set the appointment data immediately
           }else{
             message.error("Data isn't available...");
-            setFormSubmitted(true);
           }
           
         } else {
@@ -71,11 +72,7 @@ function New_Appointment_Report({
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (isFormSubmitted) {
-      handleDownload();
-    }
-  }, [isFormSubmitted]);
+
 
   const checkPdf =
     <Document >
@@ -127,6 +124,13 @@ function New_Appointment_Report({
         </View>
       </Page>
     </Document>
+
+useEffect(() => {
+  if (isFormSubmitted) {
+     handleDownload();
+     setFormSubmitted(false)
+  }
+}, [isFormSubmitted]);
 
   const handleDownload = async () => {
     try {
